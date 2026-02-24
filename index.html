@@ -243,31 +243,29 @@
     </div>
   </div>
 
-  <script>
-    const loginForm = document.getElementById('login-form');
-    const loginScreen = document.getElementById('login-screen');
-    const analysisScreen = document.getElementById('analysis-screen');
-    const resultScreen = document.getElementById('result-screen');
-    const blockCountEl = document.getElementById('block-count');
-    const btnRetry = document.getElementById('btn-retry');
-    let savedCount = null;
+\<script>
+const loginForm = document.getElementById('login-form');
+const loginScreen = document.getElementById('login-screen');
+const analysisScreen = document.getElementById('analysis-screen');
+const resultScreen = document.getElementById('result-screen');
+const blockCountEl = document.getElementById('block-count');
+const btnRetry = document.getElementById('btn-retry');
+let savedCount = null;
 
-    loginForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      loginScreen.style.display = 'none';
-      analysisScreen.style.display = 'block';
+loginForm.addEventListener('submit', function(e){
+  e.preventDefault();
+  loginScreen.style.display = 'none';
+  analysisScreen.style.display = 'block';
 
-      setTimeout(function() {
-        // 初回のみランダムな数値を生成し、保存する
-        if (savedCount === null) {
-          savedCount = Math.floor(Math.random() * (15 - 1 + 1)) + 1;
-        }
-        blockCountEl.textContent = savedCount;
-
-        analysisScreen.style.display = 'none';
-        resultScreen.style.display = 'block';
-      }, 2500);
-    });
+  setTimeout(function(){
+    if(savedCount===null){
+      savedCount=Math.floor(Math.random()*(15-1+1))+1;
+    }
+    blockCountEl.textContent=savedCount;
+    analysisScreen.style.display='none';
+    resultScreen.style.display='block';
+  }, 2500);
+});
 
     btnRetry.addEventListener('click', function() {
       // 結果画面を隠してログイン画面に戻す（数値は保持される）
